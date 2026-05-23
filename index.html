@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>張瓊安的 AI 特助團隊</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --card-hover: #1a2235;
+    --border: #1e293b;
+    --accent: #6366f1;
+    --accent2: #22d3ee;
+    --accent3: #f59e0b;
+    --accent4: #10b981;
+    --accent5: #f43f5e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: rgba(99,102,241,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* starfield */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #a5b4fc;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #e2e8f0 0%, #a5b4fc 50%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #a5b4fc, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    background: var(--card-hover);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .card.highlight {
+    border-color: rgba(99,102,241,0.4);
+  }
+  .card.highlight:hover { border-color: rgba(99,102,241,0.7); box-shadow: 0 8px 32px var(--glow); }
+
+  .card.yellow { }
+  .card.yellow:hover { border-color: rgba(245,158,11,0.5); box-shadow: 0 8px 32px rgba(245,158,11,0.1); }
+
+  .card.green { }
+  .card.green:hover { border-color: rgba(16,185,129,0.5); box-shadow: 0 8px 32px rgba(16,185,129,0.1); }
+
+  .card.cyan { }
+  .card.cyan:hover { border-color: rgba(34,211,238,0.5); box-shadow: 0 8px 32px rgba(34,211,238,0.1); }
+
+  .card.red { }
+  .card.red:hover { border-color: rgba(244,63,94,0.5); box-shadow: 0 8px 32px rgba(244,63,94,0.1); }
+
+  /* Card glow accent line top */
+  .card-accent {
+    position: absolute;
+    top: 0; left: 24px; right: 24px;
+    height: 1px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .avatar {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .avatar::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 13px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .card-title-group { flex: 1; min-width: 0; }
+
+  .card-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+
+  .card-role {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .model-tag {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-family: monospace;
+    color: #94a3b8;
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px #10b981;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .status-dot.amber { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+  .status-dot.offline { background: var(--muted); box-shadow: none; animation: none; }
+
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #94a3b8;
+    margin-bottom: 16px;
+  }
+
+  /* Skills chips */
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .skill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .skill.indigo { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3); color: #a5b4fc; }
+  .skill.cyan   { background: rgba(34,211,238,0.08); border-color: rgba(34,211,238,0.25); color: #67e8f9; }
+  .skill.amber  { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); color: #fcd34d; }
+  .skill.green  { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #6ee7b7; }
+  .skill.rose   { background: rgba(244,63,94,0.08); border-color: rgba(244,63,94,0.25); color: #fda4af; }
+  .skill.slate  { background: rgba(100,116,139,0.1); border-color: rgba(100,116,139,0.3); color: #94a3b8; }
+  .skill.violet { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.25); color: #c4b5fd; }
+
+  /* Big card for main */
+  .card.big {
+    grid-column: 1 / -1;
+    padding: 32px;
+  }
+
+  .card.big .card-header { gap: 20px; }
+  .card.big .avatar { width: 64px; height: 64px; font-size: 32px; border-radius: 16px; }
+  .card.big .card-name { font-size: 20px; }
+
+  .big-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 600px) { .big-body { grid-template-columns: 1fr; } }
+
+  .big-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .big-section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .big-section ul li {
+    font-size: 13px;
+    color: #94a3b8;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .big-section ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  /* Infra card */
+  .infra-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+  }
+
+  .infra-item { display: flex; flex-direction: column; gap: 6px; }
+  .infra-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .infra-value { font-size: 14px; color: #e2e8f0; font-weight: 500; }
+  .infra-sub { font-size: 11px; color: var(--muted); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .footer strong { color: #a5b4fc; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">
+      🤖 AI Team Roster · 2026
+    </div>
+    <h1>張瓊安的 AI 特助軍團</h1>
+    <p>不是一個人在工作。<br>這是瓊安每天指揮的 AI 團隊——各司其職，24 小時在線。</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-number">6</div>
+      <div class="stat-label">AI 員工上線中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">24/7</div>
+      <div class="stat-label">全天候執行</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">n8n</div>
+      <div class="stat-label">自動化引擎</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">5+</div>
+      <div class="stat-label">跨系統整合</div>
+    </div>
+  </div>
+
+  <!-- 指揮官 -->
+  <div class="section">
+    <div class="section-title">
+      <span style="background:#6366f1;"></span>
+      指揮官
+    </div>
+    <div class="cards-grid">
+      <div class="card big highlight">
+        <div class="card-accent" style="background: linear-gradient(90deg, #6366f1, #22d3ee);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #1e1b4b, #312e81);">🧠</div>
+          <div class="card-title-group">
+            <div class="card-name">小特助 CC</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              主力特助 · 全能指揮 &nbsp;
+              <span class="model-tag">Claude Opus</span>
+            </div>
+          </div>
+        </div>
+        <div class="big-body">
+          <div class="big-section">
+            <div class="big-section-title">負責範圍</div>
+            <ul>
+              <li>接收瓊安所有 Telegram 指令並執行</li>
+              <li>協調其他 AI 員工分工完成任務</li>
+              <li>讀寫 Obsidian 知識庫（vault）</li>
+              <li>提取小紅書、YouTube、Threads 內容</li>
+              <li>管理 TimeTree 行事曆</li>
+              <li>查詢 Claude Max 使用配額</li>
+            </ul>
+          </div>
+          <div class="big-section">
+            <div class="big-section-title">核心能力</div>
+            <ul>
+              <li>跨系統任務拆解與派發</li>
+              <li>自然語言理解複雜指令</li>
+              <li>程式碼開發、debug、部署</li>
+              <li>SSH 遠端進 Mac Mini 執行維運</li>
+              <li>模糊需求自行定義問題並解決</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <div class="skills">
+            <span class="skill indigo">🔧 任務執行</span>
+            <span class="skill cyan">📚 知識庫管理</span>
+            <span class="skill amber">📱 內容提取</span>
+            <span class="skill green">📅 行事曆</span>
+            <span class="skill violet">🤖 多 AI 協調</span>
+            <span class="skill rose">💻 系統維運</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 專責機器人 -->
+  <div class="section">
+    <div class="section-title">
+      <span style="background:#22d3ee;"></span>
+      專責 AI 員工
+    </div>
+    <div class="cards-grid">
+
+      <!-- Doctor -->
+      <div class="card cyan">
+        <div class="card-accent" style="background: linear-gradient(90deg, #0e7490, #22d3ee);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #083344, #164e63);">🩺</div>
+          <div class="card-title-group">
+            <div class="card-name">Doctor</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              系統醫生 · 自動修復 &nbsp;
+              <span class="model-tag">Claude Opus</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          監控所有 Bot 健康狀態。收到 /inject 指令後，自動診斷問題根源、執行修復、回報結果——不需要人工介入。
+        </div>
+        <div class="skills">
+          <span class="skill cyan">🔍 自動診斷</span>
+          <span class="skill green">⚡ 即時修復</span>
+          <span class="skill slate">📊 健康監控</span>
+        </div>
+      </div>
+
+      <!-- 秘書 SEC -->
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #7c3aed, #a78bfa);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #2e1065, #4c1d95);">📋</div>
+          <div class="card-title-group">
+            <div class="card-name">秘書 SEC</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              行政秘書 · 訊息彙整 &nbsp;
+              <span class="model-tag">Claude Sonnet</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          匯整 LINE 群組訊息，過濾雜訊後整理為摘要。協助排程規劃與跨平台通知轉送。
+        </div>
+        <div class="skills">
+          <span class="skill violet">📩 訊息彙整</span>
+          <span class="skill indigo">📆 排程規劃</span>
+          <span class="skill slate">🔔 通知轉送</span>
+        </div>
+      </div>
+
+      <!-- 簡家財務 -->
+      <div class="card yellow">
+        <div class="card-accent" style="background: linear-gradient(90deg, #92400e, #f59e0b);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #451a03, #78350f);">💰</div>
+          <div class="card-title-group">
+            <div class="card-name">簡家財務</div>
+            <div class="card-role">
+              <div class="status-dot amber"></div>
+              家庭財務顧問 &nbsp;
+              <span class="model-tag">Claude Sonnet</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          專屬家庭財務對話 Bot，記錄收支、分析預算、回答理財問題。對話情境獨立，財務資訊不混入其他頻道。
+        </div>
+        <div class="skills">
+          <span class="skill amber">📊 收支分析</span>
+          <span class="skill green">💹 預算規劃</span>
+          <span class="skill slate">🔒 隔離對話</span>
+        </div>
+      </div>
+
+      <!-- LINE 採購請款 -->
+      <div class="card green">
+        <div class="card-accent" style="background: linear-gradient(90deg, #064e3b, #10b981);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #022c22, #064e3b);">🛒</div>
+          <div class="card-title-group">
+            <div class="card-name">LINE 採購請款</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              採購流程自動化 &nbsp;
+              <span class="model-tag">Claude Sonnet</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          解析 LINE 傳入的請款訊息或報價單，自動生成結構化採購單並建立 Ragic 表單。減少人工重複輸入。
+        </div>
+        <div class="skills">
+          <span class="skill green">📝 採購單建立</span>
+          <span class="skill amber">🔗 Ragic 整合</span>
+          <span class="skill cyan">📊 資料結構化</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 自動化引擎 -->
+  <div class="section">
+    <div class="section-title">
+      <span style="background:#f59e0b;"></span>
+      自動化引擎
+    </div>
+    <div class="cards-grid">
+
+      <!-- n8n -->
+      <div class="card yellow">
+        <div class="card-accent" style="background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #451a03, #92400e);">⚙️</div>
+          <div class="card-title-group">
+            <div class="card-name">n8n 工作流引擎</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              自動化調度中樞 &nbsp;
+              <span class="model-tag">n8n 2.13.4</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          串接所有系統的自動化大腦。處理定時任務、跨平台資料同步、Webhook 觸發流程。無需人工操作，背景靜默執行。
+        </div>
+        <div class="skills">
+          <span class="skill amber">⏰ 定時任務</span>
+          <span class="skill cyan">🔄 資料同步</span>
+          <span class="skill green">🪝 Webhook 觸發</span>
+          <span class="skill slate">🔗 跨系統串接</span>
+        </div>
+      </div>
+
+      <!-- plaud-api -->
+      <div class="card">
+        <div class="card-accent" style="background: linear-gradient(90deg, #374151, #6b7280);"></div>
+        <div class="card-header">
+          <div class="avatar" style="background: linear-gradient(135deg, #111827, #1f2937);">🎙️</div>
+          <div class="card-title-group">
+            <div class="card-name">Plaud 語音轉錄</div>
+            <div class="card-role">
+              <div class="status-dot"></div>
+              錄音轉文字 API &nbsp;
+              <span class="model-tag">Node API</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-desc">
+          接收 Plaud 錄音筆資料，自動轉錄為文字並同步至知識庫。n8n 工作流定時拉取，無需手動處理錄音。
+        </div>
+        <div class="skills">
+          <span class="skill slate">🎵 語音轉錄</span>
+          <span class="skill violet">📝 自動同步</span>
+          <span class="skill cyan">⚙️ API 服務</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 基礎設施 -->
+  <div class="section">
+    <div class="section-title">
+      <span style="background:#10b981;"></span>
+      基礎設施
+    </div>
+    <div class="infra-card">
+      <div class="infra-item">
+        <div class="infra-label">主機</div>
+        <div class="infra-value">Mac Mini M4</div>
+        <div class="infra-sub">24/7 在線 · Tailscale 遠端</div>
+      </div>
+      <div class="infra-item">
+        <div class="infra-label">AI 模型</div>
+        <div class="infra-value">Claude Max</div>
+        <div class="infra-sub">Opus + Sonnet · 5hr quota pool</div>
+      </div>
+      <div class="infra-item">
+        <div class="infra-label">對話入口</div>
+        <div class="infra-value">Telegram + LINE</div>
+        <div class="infra-sub">多頻道並行</div>
+      </div>
+      <div class="infra-item">
+        <div class="infra-label">後台系統</div>
+        <div class="infra-value">Ragic</div>
+        <div class="infra-sub">採購 / 人事 / 財務資料</div>
+      </div>
+      <div class="infra-item">
+        <div class="infra-label">知識庫</div>
+        <div class="infra-value">Obsidian Vault</div>
+        <div class="infra-sub">所有決策與資訊統一存放</div>
+      </div>
+      <div class="infra-item">
+        <div class="infra-label">行事曆</div>
+        <div class="infra-value">TimeTree</div>
+        <div class="infra-sub">AI 直接讀寫排程</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <strong>張瓊安</strong> 的 AI 作業體系 · 2026 · 由 Claude Code 驅動
+  </div>
+
+</div>
+</body>
+</html>
