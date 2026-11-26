@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>張瓊安的 AI 特助團隊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
-
   :root {
     --bg: #0a0e1a;
     --card: #111827;
@@ -180,9 +181,12 @@
   }
 
   .card:hover {
-    transform: translateY(-2px);
     background: var(--card-hover);
     box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card:hover { transform: translateY(-2px); }
   }
 
   .card.highlight {
@@ -270,7 +274,10 @@
     background: #10b981;
     flex-shrink: 0;
     box-shadow: 0 0 6px #10b981;
-    animation: pulse 2s infinite;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .status-dot { animation: pulse 2s infinite; }
   }
 
   @keyframes pulse {
